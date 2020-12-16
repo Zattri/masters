@@ -3,12 +3,19 @@ setwd("../Desktop/masters/data_mining/coursework")
 dataset = read.csv("regional_covid_data.csv")
 head(dataset)
 str(dataset)
-dataset$areaName
 
-nullRemoved = dataset[rowSums(is.na(dataset)) == 0,]
+# Remove null values from the dataset
+dataset = dataset[rowSums(is.na(dataset)) == 0,]
 
-# Needs to be fixed after here
-selectedDates = ifelse((nullRemoved$date >= as.Date('01/09/2020', "%d/%m/%Y")), nullRemoved$date, NA)
-str(selectedDates)
-selectedDates[-1]
-thing = selectedDates[is.na(selectedDates) == 0]
+# Convert dataset areaNames to numerical values - Label encoding
+# Get unique area names into vector
+regions = unique(dataset$areaName)
+
+#Convert to numeric values and set dataset$areaNames to numeric values
+dataset$areaName = as.numeric(factor(dataset$areaName, levels=regions))
+
+# Convert dates from chr format to valid date format
+dataset$date = as.Date(dataset$date, "%d/%m/%Y")
+# Select records after specific range (other data is too early in the outbreak to be useful)
+dataset = dataset[dataset$date >= as.Date("2020-04-01"),]
+
