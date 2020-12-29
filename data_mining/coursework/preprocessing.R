@@ -52,10 +52,6 @@ dbscanOut = dbscan(dataMatrix, eps=0.02, MinPts = 3) # The best one for Sept dat
 
 plot(dbscanOut, nonStdDataMatrix, main="DBScan Cluster Results")
 
-# Conclusion - DBScan is ok for seeing overall groupings, like maybe tier 2 and below (see Sept data)
-# Not so good for general conclusions with large numbers of data
-
-
 
 # Chart analysis
 # New cases per day
