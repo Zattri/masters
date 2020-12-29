@@ -26,8 +26,6 @@ dataset$date = as.Date(dataset$date, "%d/%m/%Y")
 dataset = dataset[dataset$date >= as.Date("2020-04-01"),] # Beginning of dataset
 dataset = dataset[dataset$date >= as.Date("2020-09-01"),] # 2nd Lockdown released
 
-write.csv(dataset, "visualisation_dataset.csv")
-
 
 #Standardisation
 dataset$date = as.numeric(dataset$date - min(dataset$date, na.rm = TRUE))
@@ -44,33 +42,15 @@ colnames(dataMatrix) = c("Date", "RollRate")
 colnames(nonStdDataMatrix) = c("Date", "RollRate")
 
 # Finding the optimal epoc for minimum points
-kNNdistplot(dataMatrix, k=2)
 kNNdistplot(dataMatrix, k=3) # Min points 3 seems best for  Sept+ data
-kNNdistplot(dataMatrix, k=4)
-kNNdistplot(dataMatrix, k=5)
-abline(h = 0.04, lty = 2)
-abline(h = 0.03, lty = 2)
+abline(h = 0.035, lty = 2)
 abline(h = 0.02, lty = 2)
-abline(h = 0.008, lty = 2)
-
-kNNdistplot(dataMatrix, k=6)
-kNNdistplot(dataMatrix, k=7)
-kNNdistplot(dataMatrix, k=8)
-kNNdistplot(dataMatrix, k=9)
-kNNdistplot(dataMatrix, k=10)
-kNNdistplot(dataMatrix, k=15)
-kNNdistplot(dataMatrix, k=20)
 
 
 # DBScan
 dbscanOut = dbscan(dataMatrix, eps=0.02, MinPts = 3) # The best one for Sept data
-dbscanOut = dbscan(dataMatrix, eps=0.008, MinPts = 2) # The one for all time data - doesn't work well
-dbscanOut = dbscan(dataMatrix, eps=0.03, MinPts = 3)
-dbscanOut = dbscan(dataMatrix, eps=0.03, MinPts = 5)
-dbscanOut = dbscan(dataMatrix, eps=0.04, MinPts = 5)
-dbscanOut = dbscan(dataMatrix, eps=0.06, MinPts = 9)
 
-plot(dbscanOut, nonStdDataMatrix)
+plot(dbscanOut, nonStdDataMatrix, main="DBScan Cluster Results")
 
 # Conclusion - DBScan is ok for seeing overall groupings, like maybe tier 2 and below (see Sept data)
 # Not so good for general conclusions with large numbers of data
@@ -78,15 +58,14 @@ plot(dbscanOut, nonStdDataMatrix)
 
 
 # Chart analysis
-
 # New cases per day
 plot(dataset$date, dataset$newCases, col=dataset$areaName, xlab="Date", ylab="New Cases", pch=19, 
      main="COVID-19, New cases per day")
 legend("topleft", legend=regions, col=c(1:9), pch=19)
 
 # Rolling Rate Chart
-plot(dataset$date, dataset$newCasesAvg, col=dataset$areaName, xlab="Date", ylab="New Cases", pch=19, 
-     main="COVID-19, Average cases per week")
+plot(dataset$date, dataset$newCasesAvg, col=dataset$areaName, xlab="Date", ylab="Average Cases per 100K", pch=19, 
+     main="COVID-19, Average new cases per week")
 legend("topleft", legend=regions, col=c(1:9), pch=19)
 
 # Cumulative Deaths Chart
