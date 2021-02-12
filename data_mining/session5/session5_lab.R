@@ -1,5 +1,7 @@
 library("fpc")
 
+something = iris[,1:4]
+
 dbscanOut = dbscan(iris[,1:4], eps=0.42)
 table(dbscanOut$cluster, iris$Species)
 
