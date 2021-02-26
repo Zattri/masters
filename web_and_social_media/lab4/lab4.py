@@ -6,14 +6,18 @@ from wordcloud import WordCloud
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import re
-from sklearn.feature_extraction.text import TfidTransformer
+#from sklearn.feature_extraction.text import TfidTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 
+import os 
+os.chdir("C:\\Users\\Zattri\\Desktop\\masters\\web_and_social_media\\lab4")
+
 # Dataset loading
 df = pd.read_table("Movie_Review.csv", sep=",")
+movies = pd.read_csv("Kaggle_Movies_Review.csv")
 
 # Tokenisation
 reviews = df.review.str.cat(sep=" ")
