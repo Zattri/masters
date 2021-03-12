@@ -1,7 +1,6 @@
 from twython import TwythonStreamer
 import csv
 import json
-import time
 
 import os 
 os.chdir("C:\\Users\\Zattri\\Desktop\\masters\\web_and_social_media\\lab6")
@@ -18,10 +17,10 @@ def process_tweet(tweet):
     return d
 
 class MyStreamer(TwythonStreamer):
-    
+        
     cached_tweets = []
-    tweet_limit = 10
     tweet_num = 0
+    tweet_limit = 10
     
     def on_success(self, data):
         if data["lang"] == "en":
