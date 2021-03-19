@@ -13,7 +13,7 @@ with open(creds_path, "r") as file:
 twython_client = Twython(creds["api_key"], creds["api_secret"])
 
 # Regex string
-retweet_regex = "^RT @[\w\d_]+: "
+retweet_regex = "^(RT @[\w\d_]+: )+"
 
 # Building query for sending
 def build_query(search_term, result_type="popular", res_count="10"):
@@ -28,22 +28,23 @@ def build_query(search_term, result_type="popular", res_count="10"):
 def fetch_and_format(query):
     return_sample = twython_client.search(**query)
 
-    fields = {"user": [], "date": [], "text": [], "hashtags": [], "is_retweet": [], "favourites": [], "retweets": []}
+    fields = {"user": [], "date": [], "text": [], "hashtags": [], "is_retweet": [], "favourites": [], "retweets": [], "source": [], "geo": []}
 
     for status in return_sample["statuses"]:
         fields["user"].append(status["user"]["screen_name"])
         fields["date"].append(status["created_at"])
         fields["favourites"].append(status["favorite_count"])
         fields["retweets"].append(status["retweet_count"])
+        fields["is_retweet"].append(status["retweeted"])
+        fields["source"].append(status["source"]) # Source device used to tweet
+        fields["geo"].append(status["geo"])
 
-        # Formatting text and filling retweet field        
+        # Formatting text to remove RT tag
         if regex.search(retweet_regex, status["text"]):
             new_text = regex.sub(retweet_regex, "", status["text"])
             fields["text"].append(new_text)
-            fields["is_retweet"].append("True")
         else:            
             fields["text"].append(status["text"])
-            fields["is_retweet"].append("False")
         
         # Scraping and formatting hashtags        
         hashtags = []
@@ -69,16 +70,22 @@ def save_results(results, file_path=os.path.dirname(os.path.abspath(__file__)), 
 
 # TODO - Implement searching for hashtag queries and retrieving data related to hashtags
 # Build query and fetch fields
-covid_query = build_query("COVID-19", "mixed", res_count=1000)
-covid_tweets = fetch_and_format(covid_query)
-save_results(covid_tweets, file_name="covid")
+#covid_query = build_query("COVID-19", "mixed", res_count=1000)
+#covid_tweets = fetch_and_format(covid_query)
+#save_results(covid_tweets, file_name="covid")
 
-covid_tweets.sort_values(by="favourites", inplace=True, ascending=False)
-covid_tweets.head(5)
+#covid_tweets.sort_values(by="favourites", inplace=True, ascending=False)
+#covid_tweets.head(5)
 
 
-test_query = build_query("python", "mixed", res_count=100)
-test_query_results = fetch_and_format(test_query)
+#test_query = build_query("python", "mixed", res_count=100)
+#test_query_results = fetch_and_format(test_query)
 
-save_results(test_query_results, file_name="results")
+#save_results(test_query_results, file_name="results")
+
+sarah_query = build_query("#SarahEverard", "mixed", res_count=100)
+query_results = fetch_and_format(sarah_query)
+save_results(query_results, file_name="sarah_everard")
+
+
 
